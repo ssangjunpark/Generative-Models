@@ -1,2 +1,3 @@
 .vscode
-MNIST
+vae/MNIST
+dcgan/celeba

@@ -72,7 +72,25 @@ def train_vae(epochs=10, batch_size=256, latent_dim=20):
             
             train_loss += loss.item()
         
-        print(f"Epoch {ep+1}/{epochs}, Loss: {train_loss / len(train):.4f}")
+        print(f"Epoch {ep+1}/{epochs} | Loss: {train_loss / len(train):.4f}")
+
+        decoder.eval()
+        with torch.no_grad():
+            z = torch.randn(9, latent_dim).to(device)
+            samples = decoder(z)
+            samples = samples.view(9, 28, 28, 1)
+
+        samples = samples.cpu().numpy()
+        
+        f, axarr = plt.subplots(3, 3, figsize=(8, 8)) 
+        axarr = axarr.flatten()
+        for i in range(samples.shape[0]):
+            axarr[i].imshow(samples[i].squeeze(), cmap='gray')
+            axarr[i].axis('off')
+        
+        plt.tight_layout()
+        plt.savefig(f"./{ep+1}")
+
     
     torch.save(encoder.state_dict(), 'encoder.pth')
     torch.save(decoder.state_dict(), 'decoder.pth')
